@@ -12,20 +12,20 @@ form = """
     <head>
         <style>
             form 
-            {
+            {{
                 background-color: #eee;
                 padding: 20px;
                 margin: 0 auto;
                 width: 540px;
                 font: 16px sans-serif;
                 border-radius: 10px;
-            }
+            }}
             textarea 
-            {
+            {{
                 margin: 10px 0;
                 width: 540px;
                 height: 120px;
-            }
+            }}
         </style>
     </head>
     <body>
@@ -33,7 +33,7 @@ form = """
         <label>Rotate by:
             <input type="text" name="rot" value="0" />
         </label>
-        <p><textarea name="text" ></textarea></p>
+        <p><textarea name="text">{txt_area_text}</textarea></p>
         
         <input type="submit" value="Submit Query" />
       </form>
@@ -43,7 +43,7 @@ form = """
 
 @app.route("/")
 def index():
-    return form
+    return form.format(txt_area_text = '')
 
 def is_integer(num):
     try:
@@ -60,11 +60,9 @@ def encrypt():
     if is_integer(rotator):
         rotator = int(rotator)
         encrypted_text = rotate_string(message, rotator)
-    else:
-        return "<h3>This " + cgi.escape(rotator) + "is not an integer please try again."
-    
-    
-
-    return "<h1>" + cgi.escape(encrypted_text) + "</h1>"
+        encrypted_text = cgi.escape(encrypted_text)
+        return form.format(txt_area_text = encrypted_text)
+    else: 
+        return form.format(txt_area_text = cgi.escape(rotator + " is not a number please change yourRotate by:")) 
 
 app.run()
