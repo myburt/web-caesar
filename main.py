@@ -1,5 +1,6 @@
 from flask import Flask, request
 from caesar import rotate_string
+import cgi
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -43,5 +44,27 @@ form = """
 @app.route("/")
 def index():
     return form
+
+def is_integer(num):
+    try:
+        int(num)
+        return True
+    except ValueError:
+        return False
+
+@app.route("/", methods = ['POST'])
+def encrypt():
+    message = request.form['text']
+    rotator = request.form['rot']
+
+    if is_integer(rotator):
+        rotator = int(rotator)
+        encrypted_text = rotate_string(message, rotator)
+    else:
+        return "<h3>This " + cgi.escape(rotator) + "is not an integer please try again."
+    
+    
+
+    return "<h1>" + cgi.escape(encrypted_text) + "</h1>"
 
 app.run()
